@@ -1,7 +1,13 @@
 import React from 'react';
 import { HelpCircle, CheckCircle, Search, ShieldCheck, ListOrdered, FileEdit, Printer } from 'lucide-react';
 
-export const HelpView: React.FC = () => {
+interface HelpViewProps {
+  theme?: 'dark' | 'light';
+}
+
+export const HelpView: React.FC<HelpViewProps> = ({ theme = 'dark' }) => {
+  const isDark = theme === 'dark';
+
   const steps = [
     {
       num: 'STEP 1',
@@ -61,35 +67,56 @@ export const HelpView: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs max-w-4xl mx-auto space-y-6">
-      <div className="border-b border-slate-100 pb-4">
-        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-blue-600" />
-          Editorial Methodology &amp; Workflow Guide
+    <div
+      className={`rounded-2xl border p-6 sm:p-8 no-print max-w-4xl mx-auto space-y-6 transition-all duration-200 ${
+        isDark
+          ? 'bg-[#0b1220] border-slate-800 text-slate-100 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+          : 'bg-white border-slate-200 text-slate-900 shadow-xs'
+      }`}
+    >
+      <div className={`border-b pb-4 ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <HelpCircle className={`w-5 h-5 ${isDark ? 'text-cyan-400 glow-cyan-sm' : 'text-blue-600'}`} />
+          <span className={isDark ? 'text-white glow-text-cyan' : 'text-slate-900'}>
+            Editorial Methodology &amp; Workflow Guide
+          </span>
         </h2>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
           How USA Daily Top 9 News Intelligence researches, verifies, and packages national daily briefings.
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {steps.map((step) => {
           const Icon = step.icon;
           return (
-            <div key={step.num} className="border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+            <div
+              key={step.num}
+              className={`rounded-xl p-5 border transition-all ${
+                isDark
+                  ? 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
+                  : 'border-slate-200 bg-slate-50/50'
+              }`}
+            >
               <div className="flex items-center gap-3 mb-3">
-                <span className="text-[11px] font-black uppercase tracking-wider text-blue-700 bg-blue-100/70 px-2.5 py-0.5 rounded-md">
+                <span
+                  className={`text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${
+                    isDark
+                      ? 'text-cyan-300 bg-cyan-950/70 border-cyan-500/40 glow-cyan-sm'
+                      : 'text-blue-700 bg-blue-100/70 border-blue-200'
+                  }`}
+                >
                   {step.num}
                 </span>
-                <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-blue-600" />
+                <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                  <Icon className={`w-4 h-4 ${isDark ? 'text-cyan-400' : 'text-blue-600'}`} />
                   {step.title}
                 </h3>
               </div>
-              <ul className="space-y-1.5 text-xs text-slate-700">
+              <ul className={`space-y-1.5 text-xs ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                 {step.bullets.map((b, bIdx) => (
                   <li key={bIdx} className="flex items-start gap-2">
-                    <CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isDark ? 'text-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'text-emerald-600'}`} />
                     <span className="leading-relaxed">{b}</span>
                   </li>
                 ))}
@@ -100,9 +127,13 @@ export const HelpView: React.FC = () => {
       </div>
 
       {/* Reputable Sources Reference */}
-      <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-200 text-xs text-slate-700">
-        <h4 className="font-bold text-blue-900 mb-1">Source Verification Standards:</h4>
-        <p className="leading-relaxed text-slate-600">
+      <div className={`p-4 rounded-xl border text-xs transition-colors ${
+        isDark
+          ? 'bg-blue-950/30 border-blue-500/30 text-slate-300 glow-blue-sm'
+          : 'bg-blue-50/60 border-blue-200 text-slate-700'
+      }`}>
+        <h4 className={`font-bold mb-1 ${isDark ? 'text-cyan-300' : 'text-blue-900'}`}>Source Verification Standards:</h4>
+        <p className={`leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
           We strictly prioritize wire services (Associated Press, Reuters), established public broadcasters (NPR, PBS NewsHour), official federal/state records (.gov, Supreme Court slip opinions, Federal Register), and major publications with verified fact-checking standards.
         </p>
       </div>

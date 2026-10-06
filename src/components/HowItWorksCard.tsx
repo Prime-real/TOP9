@@ -4,12 +4,16 @@ import { Compass, CheckCircle2, Loader2, Sparkles, ShieldCheck } from 'lucide-re
 interface HowItWorksCardProps {
   currentStage?: number; // 0=idle, 1=search, 2=verify, 3=rank, 4=write, 5=complete
   isGenerating?: boolean;
+  theme?: 'dark' | 'light';
 }
 
 export const HowItWorksCard: React.FC<HowItWorksCardProps> = ({
   currentStage = 0,
   isGenerating = false,
+  theme = 'dark',
 }) => {
+  const isDark = theme === 'dark';
+
   const steps = [
     {
       step: 1,
@@ -34,13 +38,23 @@ export const HowItWorksCard: React.FC<HowItWorksCardProps> = ({
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/90 p-5 shadow-xs no-print space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div className="flex items-center gap-2 text-[#0b192c] font-bold text-sm">
-          <Compass className="w-4 h-4 text-blue-600" />
-          <span>Intelligence Pipeline</span>
+    <div
+      className={`rounded-xl border p-5 shadow-xs no-print space-y-4 transition-colors duration-200 ${
+        isDark
+          ? 'bg-[#0c1222] border-slate-800/90 text-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.35)]'
+          : 'bg-white border-slate-200/90 text-slate-900 shadow-xs'
+      }`}
+    >
+      <div className={`flex items-center justify-between border-b pb-3 ${
+        isDark ? 'border-slate-800' : 'border-slate-100'
+      }`}>
+        <div className="flex items-center gap-2 font-bold text-sm">
+          <Compass className="w-4 h-4 text-cyan-400" />
+          <span className={isDark ? 'text-white' : 'text-[#0b192c]'}>Intelligence Pipeline</span>
         </div>
-        <span className="text-[10px] font-mono font-semibold text-slate-400 uppercase">
+        <span className={`text-[10px] font-mono font-semibold uppercase ${
+          isDark ? 'text-cyan-400' : 'text-slate-400'
+        }`}>
           4-Stage Protocol
         </span>
       </div>
@@ -55,14 +69,18 @@ export const HowItWorksCard: React.FC<HowItWorksCardProps> = ({
               key={s.step}
               className={`flex items-start gap-3 p-2.5 rounded-lg transition-all ${
                 isActive
-                  ? 'bg-blue-50/90 border border-blue-200 shadow-xs'
+                  ? isDark
+                    ? 'bg-cyan-950/40 border border-cyan-500/50 glow-cyan-sm'
+                    : 'bg-blue-50/90 border border-blue-200 shadow-xs'
+                  : isDark
+                  ? 'hover:bg-slate-900/60'
                   : 'hover:bg-slate-50'
               }`}
             >
               {/* Step indicator */}
               <div className="shrink-0 mt-0.5">
                 {isActive ? (
-                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                  <div className="w-6 h-6 rounded-full bg-cyan-600 text-white flex items-center justify-center text-xs font-bold glow-cyan-sm">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   </div>
                 ) : isDone ? (
@@ -70,7 +88,11 @@ export const HowItWorksCard: React.FC<HowItWorksCardProps> = ({
                     <CheckCircle2 className="w-3.5 h-3.5" />
                   </div>
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center text-xs font-bold font-mono">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono border ${
+                    isDark
+                      ? 'bg-slate-900 border-slate-700 text-slate-300'
+                      : 'bg-slate-100 border-slate-200 text-slate-700'
+                  }`}>
                     {s.step}
                   </div>
                 )}
@@ -79,12 +101,16 @@ export const HowItWorksCard: React.FC<HowItWorksCardProps> = ({
               <div className="min-w-0">
                 <h4
                   className={`text-xs font-bold ${
-                    isActive ? 'text-blue-900' : 'text-slate-800'
+                    isActive
+                      ? isDark ? 'text-cyan-300' : 'text-blue-900'
+                      : isDark ? 'text-slate-200' : 'text-slate-800'
                   }`}
                 >
                   {s.title}
                 </h4>
-                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                <p className={`text-[11px] leading-snug mt-0.5 ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
                   {s.desc}
                 </p>
               </div>
