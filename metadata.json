@@ -1,0 +1,6 @@
+{
+  "name": "USA Daily Top 9 News Intelligence",
+  "description": "AI-powered daily U.S. news research, fact verification, and PDF-ready intelligence report generator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.font-editorial-serif {
+  font-family: 'Newsreader', 'Source Serif 4', Georgia, serif;
+}
+
+.font-editorial-display {
+  font-family: 'Cinzel', 'Newsreader', Georgia, serif;
+}
+
+/* Print styles for A4 / Letter PDF saving */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-document {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .print-page-break-inside {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .print-page-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  a {
+    text-decoration: underline !important;
+    color: #0f2942 !important;
+  }
+}
+
