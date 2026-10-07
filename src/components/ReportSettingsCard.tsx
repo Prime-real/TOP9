@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings2, ArrowDownUp, CheckSquare, Layers, Flame, Zap } from 'lucide-react';
+import { Settings2, ArrowDownUp, CheckSquare, Layers, Flame, Zap, Tv, Image as ImageIcon, ShieldCheck } from 'lucide-react';
 
 interface ReportSettingsCardProps {
   selectedCategories: string[];
@@ -10,6 +10,8 @@ interface ReportSettingsCardProps {
   setRankingOrder: (order: 'desc' | 'asc') => void;
   trendingTopic?: string;
   setTrendingTopic?: (topic: string) => void;
+  tvNetworkFilter?: string;
+  setTvNetworkFilter?: (network: string) => void;
   theme?: 'dark' | 'light';
 }
 
@@ -34,6 +36,14 @@ export const POPULAR_DESKS = [
   { label: '🚨 National Security', value: 'White House defense, military policy and homeland security' },
 ];
 
+export const TV_NETWORKS = [
+  { label: '📺 All 4 Networks (CNN · Fox · NBC · ABC)', value: 'All TV Networks (CNN · Fox News · NBC · ABC)' },
+  { label: '🔴 CNN Live Wire Desk', value: 'CNN' },
+  { label: '🔵 Fox News Alert Desk', value: 'Fox News' },
+  { label: '🟣 NBC News Today Desk', value: 'NBC News' },
+  { label: '🟡 ABC News Breaking Desk', value: 'ABC News' },
+];
+
 export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
   selectedCategories,
   setSelectedCategories,
@@ -43,6 +53,8 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
   setRankingOrder,
   trendingTopic = 'Top breaking news wire alerts',
   setTrendingTopic,
+  tvNetworkFilter = 'All TV Networks (CNN · Fox News · NBC · ABC)',
+  setTvNetworkFilter,
   theme = 'dark',
 }) => {
   const isDark = theme === 'dark';
@@ -68,9 +80,11 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
           : 'bg-white border-slate-200/90 text-slate-900 shadow-xs'
       }`}
     >
-      <div className={`flex items-center justify-between border-b pb-3 ${
-        isDark ? 'border-slate-800' : 'border-slate-100'
-      }`}>
+      <div
+        className={`flex items-center justify-between border-b pb-3 ${
+          isDark ? 'border-slate-800' : 'border-slate-100'
+        }`}
+      >
         <div className="flex items-center gap-2 font-bold text-sm">
           <Settings2 className="w-4 h-4 text-cyan-400" />
           <span className={isDark ? 'text-white' : 'text-[#0b192c]'}>Research Parameters</span>
@@ -85,12 +99,57 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
         </button>
       </div>
 
+      {/* Popular TV News Channels Hunt Section */}
+      {setTvNetworkFilter && (
+        <div className="space-y-2">
+          <label
+            className={`text-xs font-bold flex items-center justify-between ${
+              isDark ? 'text-slate-200' : 'text-slate-800'
+            }`}
+          >
+            <span className="flex items-center gap-1.5">
+              <Tv className="w-3.5 h-3.5 text-rose-400" />
+              Live TV Wire Hunt (CNN · Fox · NBC · ABC)
+            </span>
+            <span className="text-[10px] text-cyan-400 font-mono">Google Data</span>
+          </label>
+          <div className="grid grid-cols-1 gap-1.5">
+            {TV_NETWORKS.map((tv) => {
+              const isSelected = tvNetworkFilter === tv.value;
+              return (
+                <button
+                  key={tv.value}
+                  type="button"
+                  onClick={() => setTvNetworkFilter(tv.value)}
+                  className={`px-2.5 py-1.5 rounded-lg border text-left text-xs transition-all cursor-pointer flex items-center justify-between ${
+                    isSelected
+                      ? isDark
+                        ? 'bg-cyan-950/40 border-cyan-400 text-cyan-200 font-bold glow-cyan-sm'
+                        : 'bg-blue-50 border-blue-400 text-blue-950 font-bold'
+                      : isDark
+                      ? 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
+                      : 'bg-slate-50/70 border-slate-200/80 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  <span>{tv.label}</span>
+                  {isSelected && (
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.9)]" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Breaking News / Trending Focus */}
       {setTrendingTopic && (
-        <div className="space-y-2">
-          <label className={`text-xs font-bold flex items-center justify-between ${
-            isDark ? 'text-slate-200' : 'text-slate-800'
-          }`}>
+        <div className={`pt-2 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'} space-y-2`}>
+          <label
+            className={`text-xs font-bold flex items-center justify-between ${
+              isDark ? 'text-slate-200' : 'text-slate-800'
+            }`}
+          >
             <span className="flex items-center gap-1.5">
               <Flame className="w-3.5 h-3.5 text-red-500" />
               Trending Focus Desk
@@ -115,7 +174,9 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
                   }`}
                 >
                   <span>{desk.label}</span>
-                  {isSelected && <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]" />}
+                  {isSelected && (
+                    <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                  )}
                 </button>
               );
             })}
@@ -138,43 +199,74 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
           {ALL_CATEGORIES.map((cat) => {
             const isChecked = selectedCategories.includes(cat);
             return (
-              <label
+              <button
                 key={cat}
-                className={`flex items-center gap-2 p-1.5 rounded-lg border text-xs cursor-pointer select-none transition-all ${
+                type="button"
+                onClick={() => toggleCategory(cat)}
+                className={`p-2 rounded-lg border text-left text-xs transition-all cursor-pointer flex items-center justify-between ${
                   isChecked
                     ? isDark
-                      ? 'border-cyan-500/40 bg-cyan-950/30 text-cyan-200 font-medium'
-                      : 'border-blue-200 bg-blue-50/50 text-slate-900 font-medium'
+                      ? 'bg-slate-900 border-cyan-500/50 text-cyan-200 font-semibold'
+                      : 'bg-blue-50/70 border-blue-200 text-blue-900 font-semibold'
                     : isDark
-                    ? 'border-slate-800/80 bg-slate-900/40 hover:bg-slate-900 text-slate-400'
-                    : 'border-slate-200/70 hover:bg-slate-50 text-slate-500'
+                    ? 'border-slate-800/80 bg-slate-900/30 text-slate-400 opacity-60'
+                    : 'border-slate-200 bg-slate-50 text-slate-400 opacity-60'
                 }`}
               >
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={() => toggleCategory(cat)}
-                  className="rounded-sm border-slate-600 text-cyan-500 focus:ring-cyan-500 h-3.5 w-3.5 cursor-pointer"
-                />
-                <span className="truncate text-[11px]">{cat}</span>
-              </label>
+                <span className="truncate pr-1">{cat}</span>
+                <span
+                  className={`w-3.5 h-3.5 rounded flex items-center justify-center text-[10px] shrink-0 ${
+                    isChecked
+                      ? isDark
+                        ? 'bg-cyan-500 text-slate-950 font-bold'
+                        : 'bg-blue-600 text-white font-bold'
+                      : 'border border-slate-600'
+                  }`}
+                >
+                  {isChecked ? '✓' : ''}
+                </span>
+              </button>
             );
           })}
         </div>
       </div>
 
+      {/* Real Media Standards Badge */}
+      <div
+        className={`p-3 rounded-lg border text-xs space-y-1 ${
+          isDark
+            ? 'bg-slate-900/80 border-slate-800 text-slate-300'
+            : 'bg-slate-50 border-slate-200 text-slate-700'
+        }`}
+      >
+        <div className="flex items-center gap-1.5 font-bold text-[11px] text-emerald-400">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>Real Media Policy (Zero AI Art)</span>
+        </div>
+        <p className="text-[10.5px] leading-relaxed text-slate-400">
+          Stories embed authentic photojournalism and official broadcast video links from CNN, Fox News, NBC News, and ABC News retrieved via Google Search data.
+        </p>
+      </div>
+
       {/* Output Format */}
       <div className={`pt-2 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
-        <label className={`block text-xs font-bold mb-1.5 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
-          Default Report Output
+        <label
+          className={`block text-xs font-bold mb-1.5 flex items-center justify-between ${
+            isDark ? 'text-slate-200' : 'text-slate-800'
+          }`}
+        >
+          <span className="flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-slate-400" />
+            Document Output Format
+          </span>
         </label>
         <select
           value={outputFormat}
           onChange={(e) => setOutputFormat(e.target.value)}
-          className={`w-full text-xs border rounded-lg px-3 py-2 font-medium focus:ring-1 focus:ring-cyan-500 outline-hidden cursor-pointer ${
+          className={`w-full text-xs rounded-lg p-2 font-medium border transition-colors cursor-pointer ${
             isDark
-              ? 'bg-slate-900 border-slate-700 text-slate-200'
-              : 'bg-slate-50 border-slate-200 text-slate-800'
+              ? 'bg-slate-900 border-slate-800 text-slate-200 focus:border-cyan-400'
+              : 'bg-slate-50 border-slate-200 text-slate-800 focus:border-blue-500'
           }`}
         >
           <option value="pdf">PDF (Print-Friendly A4 Dossier)</option>
@@ -185,9 +277,11 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
 
       {/* Ranking Order */}
       <div className={`pt-2 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
-        <label className={`block text-xs font-bold mb-1.5 flex items-center justify-between ${
-          isDark ? 'text-slate-200' : 'text-slate-800'
-        }`}>
+        <label
+          className={`block text-xs font-bold mb-1.5 flex items-center justify-between ${
+            isDark ? 'text-slate-200' : 'text-slate-800'
+          }`}
+        >
           <span className="flex items-center gap-1.5">
             <ArrowDownUp className="w-3.5 h-3.5 text-slate-400" />
             Ranking Order

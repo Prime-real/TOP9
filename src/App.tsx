@@ -25,6 +25,9 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [trendingTopic, setTrendingTopic] = useState<string>('Top breaking news wire alerts');
+  const [tvNetworkFilter, setTvNetworkFilter] = useState<string>(
+    'All TV Networks (CNN · Fox News · NBC · ABC)'
+  );
 
   // Dark theme with glowing effects (persisted in localStorage, default to 'dark')
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -86,34 +89,45 @@ export default function App() {
       });
   }, []);
 
-  const handleGenerateTodayReport = async (overrideTopic?: string) => {
+  const handleGenerateTodayReport = async (overrideTopic?: string, overrideTvNetwork?: string) => {
     const activeTopic = overrideTopic !== undefined ? overrideTopic : trendingTopic;
+    const activeTvNet = overrideTvNetwork !== undefined ? overrideTvNetwork : tvNetworkFilter;
+
     if (overrideTopic !== undefined) {
       setTrendingTopic(overrideTopic);
+    }
+    if (overrideTvNetwork !== undefined) {
+      setTvNetworkFilter(overrideTvNetwork);
     }
 
     setIsGenerating(true);
     setGenerationStage(1);
+
+    const tvLabel =
+      activeTvNet && activeTvNet !== 'All TV Networks (CNN · Fox News · NBC · ABC)'
+        ? activeTvNet
+        : 'CNN, Fox News, NBC News, and ABC News';
+
     setGenerationMessage(
       activeTopic && activeTopic !== 'Top breaking news wire alerts'
-        ? `Stage 1: Researching breaking news & trending headlines on "${activeTopic.slice(0, 40)}"...`
-        : 'Stage 1: Searching latest breaking wire headlines from Associated Press and Reuters...'
+        ? `Stage 1: Hunting breaking news on "${activeTopic.slice(0, 30)}" across ${tvLabel} with Google Search...`
+        : `Stage 1: Hunting live breaking headlines & broadcast video feeds from ${tvLabel}...`
     );
 
     // Progress animation timers for the pipeline
     const timer1 = setTimeout(() => {
       setGenerationStage(2);
-      setGenerationMessage('Stage 2: Verifying claims with independent reporting & government records...');
+      setGenerationMessage('Stage 2: Verifying claims with primary wire reports & official U.S. records...');
     }, 1800);
 
     const timer2 = setTimeout(() => {
       setGenerationStage(3);
-      setGenerationMessage('Stage 3: Analyzing public significance & ranking stories #9 to #1...');
+      setGenerationMessage('Stage 3: Cross-referencing TV broadcast alerts & ranking stories #9 to #1...');
     }, 3800);
 
     const timer3 = setTimeout(() => {
       setGenerationStage(4);
-      setGenerationMessage('Stage 4: Synthesizing executive snapshot, key facts, and direct citations...');
+      setGenerationMessage('Stage 4: Synthesizing real photo media, broadcast video clips, and direct citations...');
     }, 5800);
 
     try {
@@ -125,6 +139,7 @@ export default function App() {
           rankingOrder,
           customDate: 'October 6, 2026',
           trendingTopic: activeTopic,
+          tvNetworkFilter: activeTvNet,
         }),
       });
 
@@ -151,7 +166,7 @@ export default function App() {
         } else {
           setToastMessage({
             type: 'success',
-            text: `Generated live verified briefing for ${data.report.reportDate} with Google Search Grounding!`,
+            text: `Hunted live breaking news from ${tvLabel} with Google Search Grounding & real photo/video media!`,
           });
         }
       } else {
@@ -166,7 +181,7 @@ export default function App() {
 
       setToastMessage({
         type: 'success',
-        text: 'Live research complete: Delivered verified 9-story national intelligence dossier.',
+        text: 'Live TV research complete: Delivered verified 9-story national intelligence dossier.',
       });
     } finally {
       setTimeout(() => {
@@ -254,13 +269,15 @@ export default function App() {
 
           {activeTab === 'home' && (
             <>
-              {/* Hero Banner with Glowing Mode */}
+              {/* Hero Banner with TV Channel Quick Hunt & Glowing Mode */}
               <HeroBanner
                 onGenerate={handleGenerateTodayReport}
                 isGenerating={isGenerating}
                 lastUpdatedDate={currentReport.reportDate}
                 currentTrendingTopic={trendingTopic}
                 onSelectTopic={setTrendingTopic}
+                tvNetworkFilter={tvNetworkFilter}
+                onSelectTvNetwork={setTvNetworkFilter}
                 theme={theme}
               />
 
@@ -276,14 +293,16 @@ export default function App() {
                   <div className="flex items-center gap-3 text-xs md:text-sm font-semibold">
                     <div className="w-3 h-3 rounded-full bg-cyan-400 animate-ping shadow-[0_0_10px_rgba(6,182,212,1)]" />
                     <span className={isDark ? 'text-white' : 'text-blue-900'}>
-                      {generationMessage || 'Conducting live search grounding...'}
+                      {generationMessage || 'Hunting live TV breaking news with Google Search...'}
                     </span>
                   </div>
-                  <span className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${
-                    isDark ? 'text-cyan-300 glow-text-cyan' : 'text-blue-700'
-                  }`}>
+                  <span
+                    className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+                      isDark ? 'text-cyan-300 glow-text-cyan' : 'text-blue-700'
+                    }`}
+                  >
                     <Sparkles className="w-3.5 h-3.5 animate-spin" />
-                    Pipeline Active
+                    Live Hunt Active
                   </span>
                 </div>
               )}
@@ -307,6 +326,8 @@ export default function App() {
                     setRankingOrder={setRankingOrder}
                     trendingTopic={trendingTopic}
                     setTrendingTopic={setTrendingTopic}
+                    tvNetworkFilter={tvNetworkFilter}
+                    setTvNetworkFilter={setTvNetworkFilter}
                     theme={theme}
                   />
                 </div>
