@@ -40,11 +40,15 @@ import {
 } from 'lucide-react';
 import { NewsReport, NewsSource, NewsStory } from '../types/news';
 import { generatePdfDocument, generateSummaryPdfDocument } from '../utils/pdfGenerator';
+import { useLiveClocks, LiveClockInfo } from '../hooks/useLiveClocks';
 
 interface ReportDocumentViewProps {
   report: NewsReport;
   rankingOrder: 'desc' | 'asc';
   theme?: 'dark' | 'light';
+  liveClocks?: LiveClockInfo;
+  timezonePreference?: 'dual' | 'us' | 'india';
+  setTimezonePreference?: (tz: 'dual' | 'us' | 'india') => void;
 }
 
 function getOutletTypeBadge(type?: string, isDark: boolean = true) {
@@ -147,8 +151,17 @@ export const ReportDocumentView: React.FC<ReportDocumentViewProps> = ({
   report,
   rankingOrder,
   theme = 'dark',
+  liveClocks: externalClocks,
+  timezonePreference,
+  setTimezonePreference,
 }) => {
+  const internalClocks = useLiveClocks();
+  const clocks = externalClocks || internalClocks;
   const isDark = theme === 'dark';
+
+  const [internalTimezoneMode, setInternalTimezoneMode] = useState<'dual' | 'us' | 'india'>('dual');
+  const activeTzMode = timezonePreference || internalTimezoneMode;
+  const setTzMode = setTimezonePreference || setInternalTimezoneMode;
 
   const [copied, setCopied] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
@@ -835,6 +848,137 @@ export const ReportDocumentView: React.FC<ReportDocumentViewProps> = ({
             : 'bg-white border-slate-200/90 text-slate-900 shadow-sm'
         }`}
       >
+        {/* REAL LIVE WATCH: DUAL USA & INDIA INTERACTIVE EDITORIAL TICKER */}
+        <div
+          className={`mb-6 p-4 rounded-xl border no-print transition-all ${
+            isDark
+              ? 'bg-[#080d1a] border-cyan-500/40 text-white shadow-[0_0_25px_rgba(6,182,212,0.12)] glow-cyan-sm'
+              : 'bg-slate-50 border-slate-300 text-slate-900 shadow-xs'
+          }`}
+        >
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            {/* Left: Ticking status & Dual Watches */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+                  <span>Real Live Watch</span>
+                  <span className="text-[10px] text-slate-400 font-mono">(USA &amp; India)</span>
+                </span>
+              </div>
+
+              {/* USA Live Watch */}
+              <div
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border font-mono text-xs transition-all ${
+                  activeTzMode === 'us' || activeTzMode === 'dual'
+                    ? isDark
+                      ? 'bg-blue-950/70 border-cyan-400 text-white glow-cyan-sm'
+                      : 'bg-blue-50 border-blue-300 text-blue-950 font-bold'
+                    : isDark
+                    ? 'bg-slate-900 border-slate-800 text-slate-400'
+                    : 'bg-white border-slate-200 text-slate-500'
+                }`}
+              >
+                <span className="text-base" title="United States Eastern Time">🇺🇸</span>
+                <div>
+                  <div className="flex items-center gap-1.5 leading-tight">
+                    <span className="font-bold text-xs">{clocks.usTime}</span>
+                    <span className="text-[10px] text-cyan-400 font-semibold">{clocks.usTz}</span>
+                  </div>
+                  <div className="text-[9.5px] text-slate-400 font-sans">{clocks.usFullDate}</div>
+                </div>
+              </div>
+
+              {/* India Live Watch */}
+              <div
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border font-mono text-xs transition-all ${
+                  activeTzMode === 'india' || activeTzMode === 'dual'
+                    ? isDark
+                      ? 'bg-amber-950/70 border-amber-400 text-white glow-amber-sm'
+                      : 'bg-amber-50 border-amber-300 text-amber-950 font-bold'
+                    : isDark
+                    ? 'bg-slate-900 border-slate-800 text-slate-400'
+                    : 'bg-white border-slate-200 text-slate-500'
+                }`}
+              >
+                <span className="text-base" title="India Standard Time (IST)">🇮🇳</span>
+                <div>
+                  <div className="flex items-center gap-1.5 leading-tight">
+                    <span className="font-bold text-xs">{clocks.indiaTime}</span>
+                    <span className="text-[10px] text-amber-400 font-semibold">{clocks.indiaTz}</span>
+                  </div>
+                  <div className="text-[9.5px] text-slate-400 font-sans">{clocks.indiaFullDate}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Timezone Mode Buttons */}
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold text-slate-400">View Dossier Dates In:</span>
+              <div
+                className={`flex items-center p-0.5 rounded-lg border text-xs font-semibold ${
+                  isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setTzMode('dual')}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    activeTzMode === 'dual'
+                      ? isDark
+                        ? 'bg-cyan-950 border border-cyan-400 text-cyan-300 glow-cyan-sm'
+                        : 'bg-white text-blue-900 shadow-xs'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  🌐 Dual Watch
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTzMode('us')}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    activeTzMode === 'us'
+                      ? isDark
+                        ? 'bg-blue-950 border border-blue-400 text-blue-300 glow-blue-sm'
+                        : 'bg-white text-blue-900 shadow-xs'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  🇺🇸 USA (EDT)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTzMode('india')}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    activeTzMode === 'india'
+                      ? isDark
+                        ? 'bg-amber-950 border border-amber-400 text-amber-300 glow-amber-sm'
+                        : 'bg-white text-amber-900 shadow-xs'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  🇮🇳 India (IST)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Timezone difference callout */}
+          <div className="pt-2.5 mt-2.5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-400">
+            <div className="flex items-center gap-2">
+              <span className="text-emerald-400 font-bold">● {clocks.dayDifferenceText}</span>
+              <span className="text-slate-600">|</span>
+              <span>Time Difference: {clocks.timeOffsetSummary}</span>
+            </div>
+            <div className="text-[10.5px] text-slate-500 font-sans">
+              Clocks update live every second based on official America/New_York &amp; Asia/Kolkata standards.
+            </div>
+          </div>
+        </div>
+
         {/* Document Broadsheet Masthead */}
         <div className={`border-b-2 pb-5 ${isDark ? 'border-slate-800' : 'border-slate-900'}`}>
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
@@ -861,7 +1005,16 @@ export const ReportDocumentView: React.FC<ReportDocumentViewProps> = ({
                   isDark ? 'text-slate-300' : 'text-slate-600'
                 }`}
               >
-                <span>Top 9 Verified U.S. News Developments · {report.reportDate}</span>
+                <span>
+                  Top 9 Verified U.S. News Developments ·{' '}
+                  <strong className={isDark ? 'text-cyan-300' : 'text-blue-900'}>
+                    {activeTzMode === 'india'
+                      ? `${clocks.indiaFullDate} (IST)`
+                      : activeTzMode === 'us'
+                      ? `${clocks.usFullDate} (${clocks.usTz})`
+                      : `${clocks.usFullDate} (USA) · ${clocks.indiaFullDate} (India)`}
+                  </strong>
+                </span>
                 {report.trendingTopic && (
                   <>
                     <span aria-hidden="true" className="text-slate-600">·</span>
@@ -883,6 +1036,10 @@ export const ReportDocumentView: React.FC<ReportDocumentViewProps> = ({
               <div className="flex sm:justify-end items-center gap-1 font-semibold text-emerald-400">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>STORIES VERIFIED: {report.storiesVerified} OF 9</span>
+              </div>
+              <div className="text-[10px] text-slate-400 pt-0.5 flex sm:justify-end items-center gap-1 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>LIVE: {clocks.usTime} ({clocks.usTz}) · {clocks.indiaTime} ({clocks.indiaTz})</span>
               </div>
             </div>
           </div>
@@ -1059,7 +1216,13 @@ export const ReportDocumentView: React.FC<ReportDocumentViewProps> = ({
                           {story.location}
                         </span>
                         <span aria-hidden="true" className="text-slate-600">·</span>
-                        <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>{story.date}</span>
+                        <span className={`font-mono text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                          {activeTzMode === 'india'
+                            ? `${clocks.indiaDate} (IST)`
+                            : activeTzMode === 'us'
+                            ? `${story.date || clocks.usDate} (${clocks.usTz})`
+                            : `${story.date || clocks.usDate} (USA) · ${clocks.indiaDate} (IST)`}
+                        </span>
                       </div>
 
                       {story.significanceRating && (

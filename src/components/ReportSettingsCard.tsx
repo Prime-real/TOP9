@@ -1,5 +1,6 @@
 import React from 'react';
-import { Settings2, ArrowDownUp, CheckSquare, Layers, Flame, Zap, Tv, Image as ImageIcon, ShieldCheck } from 'lucide-react';
+import { Settings2, ArrowDownUp, CheckSquare, Layers, Flame, Zap, Tv, Image as ImageIcon, ShieldCheck, Clock, Globe } from 'lucide-react';
+import { LiveClockInfo, useLiveClocks } from '../hooks/useLiveClocks';
 
 interface ReportSettingsCardProps {
   selectedCategories: string[];
@@ -12,6 +13,9 @@ interface ReportSettingsCardProps {
   setTrendingTopic?: (topic: string) => void;
   tvNetworkFilter?: string;
   setTvNetworkFilter?: (network: string) => void;
+  timezonePreference?: 'dual' | 'us' | 'india';
+  setTimezonePreference?: (tz: 'dual' | 'us' | 'india') => void;
+  liveClocks?: LiveClockInfo;
   theme?: 'dark' | 'light';
 }
 
@@ -55,8 +59,13 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
   setTrendingTopic,
   tvNetworkFilter = 'All TV Networks (CNN · Fox News · NBC · ABC)',
   setTvNetworkFilter,
+  timezonePreference = 'dual',
+  setTimezonePreference,
+  liveClocks: externalClocks,
   theme = 'dark',
 }) => {
+  const internalClocks = useLiveClocks();
+  const clocks = externalClocks || internalClocks;
   const isDark = theme === 'dark';
 
   const toggleCategory = (cat: string) => {
@@ -325,6 +334,87 @@ export const ReportSettingsCard: React.FC<ReportSettingsCardProps> = ({
             <div className="font-bold text-[11px]">#1 Down to #9</div>
             <div className="text-[9.5px] opacity-80">Leads with Top Story</div>
           </button>
+        </div>
+      </div>
+
+      {/* REAL LIVE WATCH: TIMEZONE PREFERENCE & DUAL LIVE DISPLAY */}
+      <div className={`pt-2 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'} space-y-2.5`}>
+        <div className="flex items-center justify-between">
+          <label className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+            <Clock className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Real Live Watch (USA &amp; India)</span>
+          </label>
+          <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Ticking
+          </span>
+        </div>
+
+        {/* Live dual clocks readout */}
+        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div className={`p-2 rounded-lg border ${isDark ? 'bg-slate-900/90 border-cyan-500/30 text-white' : 'bg-blue-50/70 border-blue-200 text-blue-950'}`}>
+            <div className="flex items-center justify-between text-[10px] text-slate-400">
+              <span>🇺🇸 USA (EDT)</span>
+              <span className="text-cyan-400 font-bold">{clocks.usTz}</span>
+            </div>
+            <div className="font-bold text-xs pt-0.5">{clocks.usTime}</div>
+            <div className="text-[9.5px] text-slate-400 font-sans truncate">{clocks.usDate}</div>
+          </div>
+
+          <div className={`p-2 rounded-lg border ${isDark ? 'bg-slate-900/90 border-amber-500/30 text-white' : 'bg-amber-50/70 border-amber-200 text-amber-950'}`}>
+            <div className="flex items-center justify-between text-[10px] text-slate-400">
+              <span>🇮🇳 India (IST)</span>
+              <span className="text-amber-400 font-bold">IST</span>
+            </div>
+            <div className="font-bold text-xs pt-0.5">{clocks.indiaTime}</div>
+            <div className="text-[9.5px] text-slate-400 font-sans truncate">{clocks.indiaDate}</div>
+          </div>
+        </div>
+
+        {/* Timezone Preference Selector */}
+        {setTimezonePreference && (
+          <div className="space-y-1 pt-1">
+            <span className="text-[10.5px] text-slate-400 font-medium">Display Timezone on Dossier:</span>
+            <div className="grid grid-cols-3 gap-1.5 text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => setTimezonePreference('dual')}
+                className={`py-1.5 px-1 rounded-md border text-center transition-all cursor-pointer ${
+                  timezonePreference === 'dual'
+                    ? isDark ? 'bg-cyan-600 text-white border-cyan-400 glow-cyan-sm' : 'bg-[#0b192c] text-white border-slate-900 shadow-xs'
+                    : isDark ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 border-slate-200 text-slate-700'
+                }`}
+              >
+                🌐 Dual
+              </button>
+              <button
+                type="button"
+                onClick={() => setTimezonePreference('us')}
+                className={`py-1.5 px-1 rounded-md border text-center transition-all cursor-pointer ${
+                  timezonePreference === 'us'
+                    ? isDark ? 'bg-blue-600 text-white border-blue-400 glow-blue-sm' : 'bg-blue-900 text-white border-blue-950 shadow-xs'
+                    : isDark ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 border-slate-200 text-slate-700'
+                }`}
+              >
+                🇺🇸 USA
+              </button>
+              <button
+                type="button"
+                onClick={() => setTimezonePreference('india')}
+                className={`py-1.5 px-1 rounded-md border text-center transition-all cursor-pointer ${
+                  timezonePreference === 'india'
+                    ? isDark ? 'bg-amber-600 text-white border-amber-400 glow-amber-sm' : 'bg-amber-900 text-white border-amber-950 shadow-xs'
+                    : isDark ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 border-slate-200 text-slate-700'
+                }`}
+              >
+                🇮🇳 India
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="text-[10px] text-slate-400 font-mono">
+          Offset: {clocks.timeOffsetSummary}
         </div>
       </div>
     </div>

@@ -1,11 +1,13 @@
 import React from 'react';
-import { Settings, ShieldCheck, Database, Sliders, Globe } from 'lucide-react';
+import { Settings, ShieldCheck, Database, Sliders, Globe, Clock } from 'lucide-react';
 
 interface SettingsViewProps {
   rankingOrder: 'desc' | 'asc';
   setRankingOrder: (order: 'desc' | 'asc') => void;
   outputFormat: string;
   setOutputFormat: (fmt: string) => void;
+  timezonePreference?: 'dual' | 'us' | 'india';
+  setTimezonePreference?: (tz: 'dual' | 'us' | 'india') => void;
   theme?: 'dark' | 'light';
 }
 
@@ -14,6 +16,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   setRankingOrder,
   outputFormat,
   setOutputFormat,
+  timezonePreference = 'dual',
+  setTimezonePreference,
   theme = 'dark',
 }) => {
   const isDark = theme === 'dark';
@@ -116,6 +120,77 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Real Live Watch & Timezone Setting */}
+      {setTimezonePreference && (
+        <div className="space-y-3">
+          <div className={`flex items-center gap-2 text-sm font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+            <Clock className={`w-4 h-4 ${isDark ? 'text-cyan-400' : 'text-blue-600'}`} />
+            <span>Live Watch &amp; Timezone Display Preference</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div
+              onClick={() => setTimezonePreference('dual')}
+              className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                timezonePreference === 'dual'
+                  ? isDark
+                    ? 'bg-cyan-950/60 border-cyan-500/50 text-white glow-cyan-sm shadow-md'
+                    : 'bg-blue-50/80 border-blue-400 text-blue-950 shadow-xs'
+                  : isDark
+                  ? 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <div className="font-bold text-xs flex items-center gap-1.5">
+                <span>🌐 Dual Watch (USA &amp; India)</span>
+              </div>
+              <p className={`text-[11px] mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Displays both US Eastern Time (EDT) and India Standard Time (IST) simultaneously.
+              </p>
+            </div>
+
+            <div
+              onClick={() => setTimezonePreference('us')}
+              className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                timezonePreference === 'us'
+                  ? isDark
+                    ? 'bg-blue-950/60 border-blue-500/50 text-white glow-blue-sm shadow-md'
+                    : 'bg-blue-50/80 border-blue-400 text-blue-950 shadow-xs'
+                  : isDark
+                  ? 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <div className="font-bold text-xs flex items-center gap-1.5">
+                <span>🇺🇸 USA Eastern Standard</span>
+              </div>
+              <p className={`text-[11px] mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Locks briefing dates and timestamps to America/New_York (Washington, D.C. / NY).
+              </p>
+            </div>
+
+            <div
+              onClick={() => setTimezonePreference('india')}
+              className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                timezonePreference === 'india'
+                  ? isDark
+                    ? 'bg-amber-950/60 border-amber-500/50 text-white glow-amber-sm shadow-md'
+                    : 'bg-amber-50/80 border-amber-400 text-amber-950 shadow-xs'
+                  : isDark
+                  ? 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <div className="font-bold text-xs flex items-center gap-1.5">
+                <span>🇮🇳 India Standard Time (IST)</span>
+              </div>
+              <p className={`text-[11px] mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Locks briefing dates and timestamps to Asia/Kolkata (+5:30 UTC time zone).
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Output Format */}
       <div className="space-y-3">

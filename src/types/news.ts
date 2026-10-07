@@ -56,11 +56,22 @@ export interface GoogleSearchData {
   tvNetworksHunted: PopularTvNetwork[];
 }
 
+export interface DualTimezoneInfo {
+  usDate: string;
+  usTime: string;
+  usTz: string;
+  indiaDate: string;
+  indiaTime: string;
+  indiaTz: string;
+  timeOffset: string;
+}
+
 export interface NewsReport {
   id: string;
   title: string;
   reportDate: string;
   generatedAt: string;
+  timezones?: DualTimezoneInfo;
   storiesVerified: number;
   trendingTopic?: string;
   tvHuntTarget?: string; // e.g. "CNN · Fox News · NBC News · ABC News"

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLiveClocks, LiveClockInfo } from '../hooks/useLiveClocks';
 import {
   Play,
   Loader2,
@@ -28,6 +29,7 @@ interface HeroBannerProps {
   onSelectTopic?: (topic: string) => void;
   tvNetworkFilter?: string;
   onSelectTvNetwork?: (network: string) => void;
+  liveClocks?: LiveClockInfo;
   theme?: 'dark' | 'light';
 }
 
@@ -86,8 +88,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   onSelectTopic,
   tvNetworkFilter = 'All TV Networks (CNN · Fox News · NBC · ABC)',
   onSelectTvNetwork,
+  liveClocks: externalClocks,
   theme = 'dark',
 }) => {
+  const internalClocks = useLiveClocks();
+  const clocks = externalClocks || internalClocks;
   const [customTopicInput, setCustomTopicInput] = useState('');
   const isDark = theme === 'dark';
 
@@ -213,9 +218,49 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
             </button>
 
-            <div className="flex items-center gap-2 text-xs text-slate-400 font-medium pl-1">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
-              <span>Edition: {lastUpdatedDate}</span>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono pl-1">
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
+                  isDark
+                    ? 'bg-slate-900/90 border-cyan-500/40 text-cyan-300 glow-cyan-sm'
+                    : 'bg-white border-slate-300 text-blue-950 font-bold shadow-2xs'
+                }`}
+                title="Live USA Eastern Time (EDT/EST)"
+              >
+                <span className="text-sm">🇺🇸</span>
+                <div>
+                  <div className="flex items-center gap-1 font-bold">
+                    <span>{clocks.usTime}</span>
+                    <span className="text-[10px] opacity-75">{clocks.usTz}</span>
+                  </div>
+                  <div className="text-[9.5px] text-slate-400 font-sans font-normal">{clocks.usDate}</div>
+                </div>
+              </div>
+
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
+                  isDark
+                    ? 'bg-slate-900/90 border-amber-500/40 text-amber-300 glow-amber-sm'
+                    : 'bg-white border-slate-300 text-amber-900 font-bold shadow-2xs'
+                }`}
+                title="Live India Standard Time (IST - UTC+5:30)"
+              >
+                <span className="text-sm">🇮🇳</span>
+                <div>
+                  <div className="flex items-center gap-1 font-bold">
+                    <span>{clocks.indiaTime}</span>
+                    <span className="text-[10px] opacity-75">{clocks.indiaTz}</span>
+                  </div>
+                  <div className="text-[9.5px] text-slate-400 font-sans font-normal">{clocks.indiaDate}</div>
+                </div>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-950/70 text-[10.5px] text-slate-300 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-emerald-400 font-semibold">{clocks.isIndiaNextDay ? 'India +1 Day' : 'Same Day'}</span>
+                <span className="text-slate-600">|</span>
+                <span className="text-slate-400">+9h 30m</span>
+              </div>
             </div>
           </div>
         </div>

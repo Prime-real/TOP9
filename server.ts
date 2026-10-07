@@ -43,7 +43,14 @@ app.post('/api/news/generate', async (req: Request, res: Response) => {
     trendingTopic = '',
     tvNetworkFilter = 'All TV Networks (CNN · Fox News · NBC · ABC)',
   } = req.body;
-  const targetDate = customDate || 'October 6, 2026';
+  const now = new Date();
+  const dynamicToday = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'America/New_York',
+  }).format(now);
+  const targetDate = customDate || dynamicToday;
 
   const isBreakingOrTopic = trendingTopic && trendingTopic.trim().length > 0 && trendingTopic.toLowerCase() !== 'all';
   const topicDirective = isBreakingOrTopic
@@ -409,9 +416,22 @@ Respond with ONLY valid JSON in the specified structure.`;
     parsedReport.generatedAt = new Intl.DateTimeFormat('en-US', {
       hour: 'numeric',
       minute: 'numeric',
+      second: 'numeric',
       hour12: true,
+      timeZone: 'America/New_York',
       timeZoneName: 'short',
     }).format(new Date());
+
+    const genNow = new Date();
+    parsedReport.timezones = {
+      usDate: new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' }).format(genNow),
+      usTime: new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true, timeZone: 'America/New_York', timeZoneName: 'short' }).format(genNow),
+      usTz: 'EDT',
+      indiaDate: new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(genNow),
+      indiaTime: new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true, timeZone: 'Asia/Kolkata', timeZoneName: 'short' }).format(genNow),
+      indiaTz: 'IST',
+      timeOffset: '+9h 30m ahead',
+    };
 
     latestReport = parsedReport;
     reportsHistory.unshift(parsedReport);

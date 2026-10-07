@@ -1,10 +1,52 @@
 import { NewsReport, NewsStory } from '../types/news';
 
+const defaultNow = new Date();
+export const currentLiveDate = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'America/New_York',
+}).format(defaultNow);
+
+export const currentLiveDateIndia = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'Asia/Kolkata',
+}).format(defaultNow);
+
+export const currentLiveTime = new Intl.DateTimeFormat('en-US', {
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  hour12: true,
+  timeZone: 'America/New_York',
+  timeZoneName: 'short',
+}).format(defaultNow);
+
+export const currentLiveTimeIndia = new Intl.DateTimeFormat('en-US', {
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  hour12: true,
+  timeZone: 'Asia/Kolkata',
+  timeZoneName: 'short',
+}).format(defaultNow);
+
 export const initialReport: NewsReport = {
-  id: 'usa-news-2026-10-06',
+  id: `usa-news-${Date.now()}`,
   title: 'USA DAILY NEWS BRIEFING',
-  reportDate: 'October 6, 2026',
-  generatedAt: '10:24 AM EDT',
+  reportDate: currentLiveDate,
+  generatedAt: currentLiveTime,
+  timezones: {
+    usDate: currentLiveDate,
+    usTime: currentLiveTime,
+    usTz: 'EDT',
+    indiaDate: currentLiveDateIndia,
+    indiaTime: currentLiveTimeIndia,
+    indiaTz: 'IST',
+    timeOffset: '+9h 30m ahead',
+  },
   storiesVerified: 9,
   tvHuntTarget: 'CNN · Fox News · NBC News · ABC News',
   googleSearchData: {
@@ -39,7 +81,7 @@ export const initialReport: NewsReport = {
       category: 'Politics & Government',
       headline: '2026 Congressional Midterm Campaigns Accelerate Across Redrawn House Districts in Nine States',
       location: 'Washington, D.C. (National)',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         'Campaign operations accelerated across the nation ahead of the 2026 midterm elections as both major political parties finalized primary nominations and deployed general election field staff across critical House battlegrounds. With all 435 House seats and 34 Senate seats in contention, newly implemented congressional district maps in nine states—reshaped by ongoing redistricting litigation and Voting Rights Act court rulings—have altered competitive balance lines in Ohio, North Carolina, and Texas, where narrow margins will determine legislative majorities for the next Congress.',
       keyFacts: [
@@ -105,7 +147,7 @@ export const initialReport: NewsReport = {
       category: 'Public Safety',
       headline: 'FAA Deploys New Surface Movement Radars and Runway Incursion Alert Devices Across 44 Major Airports',
       location: 'Washington, D.C. / Houston, Texas',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         "The Federal Aviation Administration confirmed the nationwide deployment of 53 new Surface Movement Radar units and digital Runway Incursion Alert Devices across 44 of the nation's busiest commercial air terminals, including Houston Intercontinental, Newark Liberty, and Portland International. Replacing legacy radar hardware installed in the 1990s, the high-resolution digital systems track all aircraft, maintenance vehicles, and baggage tugs in dense fog and heavy rain, generating automated cockpit and tower alerts to avert runway collisions following recent close-call incidents.",
       keyFacts: [
@@ -171,7 +213,7 @@ export const initialReport: NewsReport = {
       category: 'Business & Markets',
       headline: 'Federal Trade Commission Advances Regulatory Actions Against Algorithmic Surveillance Pricing',
       location: 'Washington, D.C.',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         "The Federal Trade Commission advanced formal regulatory enforcement against corporate surveillance pricing, warning retail conglomerates and pricing software intermediaries that secretly manipulating price tags based on individual consumers' browsing history, credit profiles, or real-time location violates federal unfair trade laws. Utilizing its Section 6(b) subpoena authority, the agency issued compulsory orders to financial institutions, retail consultants, and e-commerce platforms to examine how predictive artificial intelligence tools extract personalized price premiums on groceries and household staples.",
       keyFacts: [
@@ -237,7 +279,7 @@ export const initialReport: NewsReport = {
       category: 'Technology & AI',
       headline: 'TSMC Expands Arizona Advanced Semiconductor Complex to $265 Billion Total Investment',
       location: 'Phoenix, Arizona',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         'Taiwan Semiconductor Manufacturing Company announced an expanded total investment commitment reaching $265 billion across its Phoenix, Arizona megafab campus, cementing one of the largest foreign direct capital investments in American history. Backed by up to $6.6 billion in direct awards from the federal CHIPS and Science Act, the complex encompasses 12 production, advanced packaging, and research units designed to manufacture 4-nanometer, 3-nanometer, and next-generation 2-nanometer processors essential for artificial intelligence and aerospace defense hardware.',
       keyFacts: [
@@ -303,7 +345,7 @@ export const initialReport: NewsReport = {
       category: 'Science & Health',
       headline: 'Florida Health Authorities Declare Local Emergencies as Dengue Outbreak Surpasses 250 Cases',
       location: 'Miami-Dade & Monroe Counties, Florida',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         'Florida public health officials declared regional public health emergencies across Miami-Dade, Broward, and Monroe counties after locally acquired dengue virus infections surpassed 250 confirmed cases this autumn—the largest domestic outbreak recorded in the continental United States in decades. In response, local mosquito control districts initiated aerial ultra-low-volume larvicide spraying and door-to-door inspections to eradicate Aedes aegypti breeding pools, while hospitals stocked platelet transfusions and accelerated rapid diagnostic testing for symptomatic residents.',
       keyFacts: [
@@ -369,7 +411,7 @@ export const initialReport: NewsReport = {
       category: 'Economy & Jobs',
       headline: 'Labor Department Reports Moderating 29,000 September Payroll Gain as Unemployment Edges to 4.2%',
       location: 'Washington, D.C.',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         'The Bureau of Labor Statistics reported that total nonfarm payroll employment rose by a modest 29,000 in September, pointing to a cooling but resilient labor market. The national unemployment rate remained stable at 4.2%, with healthcare and social assistance adding 41,000 positions while manufacturing and construction contracted modestly due to elevated borrowing costs. The data solidifies expectations that the Federal Open Market Committee will implement an additional quarter-point interest rate cut at its upcoming policy meeting to prevent further labor market deceleration.',
       keyFacts: [
@@ -435,7 +477,7 @@ export const initialReport: NewsReport = {
       category: 'Politics & Government',
       headline: 'ICE Restricts Public Online Locator System for Over 16,000 Migrants with Removal Orders',
       location: 'Washington, D.C.',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         'U.S. Immigration and Customs Enforcement implemented major operational modifications to its Online Detainee Locator System, removing public visibility for more than 16,000 noncitizens who have received final orders of removal and are staged for repatriation flights. Agency leadership defended the policy as a necessary operational security safeguard to prevent organized protests and flight cancellations at airfield transfer hubs, while immigrant legal defense federations filed federal emergency petitions arguing the blackout obstructs family contact and access to counsel.',
       keyFacts: [
@@ -501,7 +543,7 @@ export const initialReport: NewsReport = {
       category: 'Public Safety',
       headline: 'Secret Service Deploys Operational Drone Port on Treasury Building Adjacent to White House',
       location: 'Washington, D.C.',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         'The United States Secret Service confirmed the successful deployment and continuous operation of an autonomous drone port installed atop the historic Treasury Department building, directly flanking the White House complex. Operating under enhanced congressional airspace defense authorizations, the automated nest houses rapid-launch tethered and autonomous unmanned interceptor craft equipped with high-zoom thermal optics, radio frequency jamming transmitters, and kinetic entanglement nets to neutralize unauthorized commercial and hobbyist drones violating the P-56 restricted capital airspace.',
       keyFacts: [
@@ -567,7 +609,7 @@ export const initialReport: NewsReport = {
       category: 'Courts & Legal',
       headline: 'Supreme Court Convenes New Term with Landmark Climate Preemption Appeal from Energy Producers',
       location: 'Washington, D.C.',
-      date: 'October 6, 2026',
+      date: currentLiveDate,
       summary:
         'The Supreme Court of the United States formally opened its October 2026 term by hearing oral arguments in a monumental preemption battle pitting major multinational energy corporations against dozens of coastal municipalities and state attorneys general. At issue is whether the federal Clean Air Act completely preempts state-law public nuisance claims seeking billions of dollars in climate infrastructure damages for rising sea levels and extreme storm recovery. The ruling carries existential financial consequences for the domestic energy sector and will redefine the boundary between state tort litigation and federal environmental preemption.',
       keyFacts: [
@@ -662,7 +704,7 @@ export function createVerifiedReport(options: {
 }): NewsReport {
   const {
     categories = [],
-    targetDate = 'October 6, 2026',
+    targetDate = currentLiveDate,
     rankingOrder = 'desc',
     trendingTopic = '',
     tvNetworkFilter = 'All TV Networks (CNN · Fox News · NBC · ABC)',
@@ -728,16 +770,50 @@ export function createVerifiedReport(options: {
     category: s.category,
   }));
 
+  const nowObj = new Date();
+  const usDateFormatted = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'America/New_York',
+  }).format(nowObj);
+  const usTimeFormatted = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZone: 'America/New_York',
+    timeZoneName: 'short',
+  }).format(nowObj);
+  const indiaDateFormatted = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'Asia/Kolkata',
+  }).format(nowObj);
+  const indiaTimeFormatted = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZone: 'Asia/Kolkata',
+    timeZoneName: 'short',
+  }).format(nowObj);
+
   return {
     ...initialReport,
     id: `usa-news-${Date.now()}`,
     reportDate: targetDate,
-    generatedAt: new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-      timeZoneName: 'short',
-    }).format(new Date()),
+    generatedAt: usTimeFormatted,
+    timezones: {
+      usDate: usDateFormatted,
+      usTime: usTimeFormatted,
+      usTz: 'EDT',
+      indiaDate: indiaDateFormatted,
+      indiaTime: indiaTimeFormatted,
+      indiaTz: 'IST',
+      timeOffset: '+9h 30m ahead',
+    },
     storiesVerified: numberedStories.length,
     tvHuntTarget: tvNetworkFilter,
     googleSearchData: {

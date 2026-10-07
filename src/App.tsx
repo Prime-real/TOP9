@@ -11,8 +11,10 @@ import { HelpView } from './components/HelpView';
 import { initialReport } from './data/sampleReport';
 import { NewsReport } from './types/news';
 import { AlertCircle, CheckCircle2, Sparkles } from 'lucide-react';
+import { useLiveClocks } from './hooks/useLiveClocks';
 
 export default function App() {
+  const liveClocks = useLiveClocks();
   const [activeTab, setActiveTab] = useState<'home' | 'reports' | 'settings' | 'help'>('home');
   const [currentReport, setCurrentReport] = useState<NewsReport>(initialReport);
   const [reportsHistory, setReportsHistory] = useState<NewsReport[]>([initialReport]);
@@ -38,6 +40,23 @@ export default function App() {
     return 'dark';
   });
 
+  // Timezone preference: 'dual' | 'us' | 'india' (persisted in localStorage)
+  const [timezonePreference, setTimezonePreference] = useState<'dual' | 'us' | 'india'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('news_intel_tz');
+      if (saved === 'dual' || saved === 'us' || saved === 'india') return saved;
+    }
+    return 'dual';
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('news_intel_tz', timezonePreference);
+    } catch (e) {
+      // ignore
+    }
+  }, [timezonePreference]);
+
   useEffect(() => {
     try {
       localStorage.setItem('news_intel_theme', theme);
@@ -55,8 +74,8 @@ export default function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Format today's date in US format: e.g. Oct 6, 2026
-  const todayDateString = 'Oct 6, 2026';
+  // Dynamic live date from ticking clock
+  const todayDateString = liveClocks.usDate;
 
   // Load existing reports and check for shareable deep-link ?report=ID
   useEffect(() => {
@@ -137,7 +156,7 @@ export default function App() {
         body: JSON.stringify({
           categories: selectedCategories,
           rankingOrder,
-          customDate: 'October 6, 2026',
+          customDate: liveClocks.usFullDate,
           trendingTopic: activeTopic,
           tvNetworkFilter: activeTvNet,
         }),
@@ -229,6 +248,7 @@ export default function App() {
         onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
         theme={theme}
         onToggleTheme={toggleTheme}
+        liveClocks={liveClocks}
       />
 
       {/* Main Layout Area */}
@@ -278,6 +298,7 @@ export default function App() {
                 onSelectTopic={setTrendingTopic}
                 tvNetworkFilter={tvNetworkFilter}
                 onSelectTvNetwork={setTvNetworkFilter}
+                liveClocks={liveClocks}
                 theme={theme}
               />
 
@@ -328,6 +349,9 @@ export default function App() {
                     setTrendingTopic={setTrendingTopic}
                     tvNetworkFilter={tvNetworkFilter}
                     setTvNetworkFilter={setTvNetworkFilter}
+                    timezonePreference={timezonePreference}
+                    setTimezonePreference={setTimezonePreference}
+                    liveClocks={liveClocks}
                     theme={theme}
                   />
                 </div>
@@ -338,6 +362,9 @@ export default function App() {
                     report={currentReport}
                     rankingOrder={rankingOrder}
                     theme={theme}
+                    liveClocks={liveClocks}
+                    timezonePreference={timezonePreference}
+                    setTimezonePreference={setTimezonePreference}
                   />
                 </div>
               </div>
@@ -360,6 +387,8 @@ export default function App() {
               setRankingOrder={setRankingOrder}
               outputFormat={outputFormat}
               setOutputFormat={setOutputFormat}
+              timezonePreference={timezonePreference}
+              setTimezonePreference={setTimezonePreference}
               theme={theme}
             />
           )}
